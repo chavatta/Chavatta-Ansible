@@ -1,0 +1,48 @@
+---
+- name: SSH-Keys
+  hosts: all
+  become: yes
+  vars:
+    Caminho: /mnt/r/Uol/Config/IPS/
+  
+  tasks:
+    - name: SSH-KeyGen
+      shell: > 
+        ssh-keygen -q -b 2048 -t rsa -N "" -C "creating SSH" -f ~/.ssh/id_rsa
+        creates="~/.ssh/id_rsa"
+
+    - name: Pull Keys to Master
+      fetch: 
+        src: "~/.ssh/id_rsa.pub"
+        dest: "/mnt/r/Uol/Transfer/{{ansible_hostname}}-id_rsa.pub"
+        flat: yes
+
+    - name: Push key add to authorized_keys
+      authorized_key:
+        user: "{{ansible_ssh_user}}"
+        state: present
+        key: "{{ lookup('file','/mnt/r/Uol/Transfer/{{item}}-id_rsa.pub')}}"
+      when: "{{ item != ansible_hostname }}"
+      with_items: 
+        - "{{ groups['APP'] }}"
+
+    - name: Criando a pasta
+      file:
+       path: "{{Caminho}}"
+       state: directory
+
+    - name: Cria arquivo IP-{{ansible_hostname}}
+      file:
+        path: "{{Caminho}}IP-{{ansible_hostname}}"
+        state: touch
+
+    - name: Escreve o arquivo IP-{{ansible_hostname}}
+      lineinfile:
+       path: "{{Caminho}}IP-{{ansible_hostname}}"
+       line: "{{hostvars[inventory_hostname].ansible_default_ipv4.address}}"
+
+    - name: Jogando Arquivo IP para o Master
+      fetch: 
+        src: "{{Caminho}}IP-{{ansible_hostname}}"
+        dest: "{{Caminho}}IP-{{ansible_hostname}}"
+        flat: yes

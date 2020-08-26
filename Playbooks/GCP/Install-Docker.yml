@@ -1,0 +1,53 @@
+---
+##########################################################
+#                                                        #
+#      Playbook - Instalação do docker_container         #
+#                                                        #
+##########################################################
+
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: "{{item}}"
+        state: present
+      loop:
+        - deb https://download.docker.com/linux/ubuntu bionic stable
+        - ppa:gluster/glusterfs-6
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [
+             'apt-transport-https'
+            , 'ca-certificates'
+            , 'curl'
+            , 'software-properties-common'
+            , 'python3-pip'
+            , 'virtualenv'
+            , 'python3-setuptools'
+            , 'vim'
+            , 'mariadb-client'
+            , 'iputils-ping'
+            , 'docker-ce'
+            , 'glusterfs-server'
+            ]
+
+    - name: serviços
+      shell: systemctl enable glusterd && systemctl start glusterd && systemctl status glusterd
+
+    - name: Install Docker Module for Python
+      pip:
+        name:
+          - 'Docker'
+    
+    

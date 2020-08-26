@@ -1,0 +1,3 @@
+---
+- import_playbook: Config/Config.yml
+- import_playbook: Playbooks/GCP/Launch-GCE.yml

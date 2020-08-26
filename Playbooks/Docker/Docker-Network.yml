@@ -1,0 +1,18 @@
+
+##########################################################
+#                                                        #
+#      Playbook - Instancias GOOGLE CLOUD PLATAFORM      #
+#                                                        #
+##########################################################
+
+- hosts: "{{groups['swarmmaster'][0]}}"
+  become: yes
+
+  tasks:
+  
+    - name: Criando habilitando Docker Swarm
+      shell:
+        docker network create -d overlay  \
+          --subnet=192.168.10.0/25 \
+          --gateway=192.168.10.100 \
+        rede_interna

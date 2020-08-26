@@ -1,0 +1,23 @@
+---
+- hosts: "{{groups['swarmmaster'][0]}}"
+  become: yes
+  
+  tasks:
+    - name: Subindo servico MySQL Cluster
+      shell:  
+        docker service create \
+          --name MySQL \
+          --mode replicated \
+          --replicas 3 \
+          --hostname mysql \
+          --constraint node.role==worker \
+          --network rede_interna \
+          --publish 3306:3306 \
+          --env MYSQL_DATABASE=db_mediawiki \
+          --mount source=/mnt/MySQL:/var/lib/mysql \
+          --mount source=/mnt/MySQL:/etc/mysql/conf.d \
+          --env DB_SERVICE_NAME=MySQL \
+          --env MYSQL_USER=mediawiki \
+          --env MYSQL_PASSWORD=123456 \
+          --env MYSQL_ROOT_PASSWORD=123456 \
+        toughiq/mariadb-cluster

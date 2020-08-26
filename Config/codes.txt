@@ -1,0 +1,28 @@
+#
+
+docker exec -it 1289bad3c7d2 maxadmin -pmariadb list servers
+
+
+docker service create --name maxscale \
+ --network rede_interna \
+ --hostname maxscale \
+ --env ENABLE_ROOT_USER=1 \
+ --env DB_SERVICE_NAME=MySQL \
+ --publish 3306:3306 \
+toughiq/maxscale:latest
+
+
+
+network create \
+  --driver overlay \
+  --ingress \
+  --
+  --subnet=10.11.0.0/16 \
+  --subnet=10.12.0.0/16
+  --gateway=10.11.0.1 \
+  --opt com.docker.network.driver.mtu=1200 \
+  rede_interna
+
+
+  docker network create -d overlay --opt encrypted pets-overlay 
+  docker service create --network pets-overlay --name db redis docker service create --network pets-overlay -p 8000:5000 -e DB=db --name web chrch/web

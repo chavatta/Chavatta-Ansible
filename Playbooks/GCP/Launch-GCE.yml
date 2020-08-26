@@ -1,0 +1,26 @@
+# ansible-playbook Teste.yml -vvvv
+- hosts: localhost
+  connection: local
+  become: yes
+  #ignore_errors: yes
+  
+  vars:
+    Nome:
+    - swarmmaster
+    - swarmnode1
+    - swarmnode2
+    - swarmnode3
+  tasks:
+
+    - name: Exclui o arquivo hosts
+      file: 
+        path: "/mnt/r/Uol/Config/hosts"
+        state: absent
+
+    - name: Cria o arquivo host atraves do template
+      shell: "cp /mnt/r/Uol/Config/hosts_template /mnt/r/Uol/Config/hosts"
+
+    - include_tasks: "Launch-GCE-1.yml"
+      loop: "{{ Nome }}"
+      loop_control:
+        loop_var: Variavel

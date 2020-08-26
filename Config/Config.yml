@@ -1,0 +1,91 @@
+##########################################################
+#                                                        #
+#  Playbook leitura de creds do Google Cloud Plataform   #
+#              e set das Variaveis de ambiente           #
+##########################################################
+
+- name: Configuração
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  vars:
+    v_Credencial: Mediawiki.json
+
+
+
+    
+  tasks:
+# Capturando JSON
+    - name: Mostrar o conteudo do JSON
+      shell: cat {{ v_Credencial }}
+      register: result
+# Capturando Tratando o texto para o formato JSON    
+    - name: Tratando o texto para o formato JSON
+      set_fact:
+        json: "{{ result.stdout | from_json }}"
+# Populando as Variaveis
+    - name: Variavel v_PrivatekeyID
+      set_fact:
+        v_PrivatekeyID: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'private_key_id'
+
+    - name: Variavel v_Privatekey
+      set_fact:
+        v_Privatekey: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'private_key'
+    
+    - name: Variavel v_ProjectID
+      set_fact:
+        v_ProjectID: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'project_id'    
+
+    - name: Variavel v_ClientEmail
+      set_fact:
+        v_ClientEmail: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'client_email'
+
+    - name: Variavel v_ClientID
+      set_fact:
+        v_ClientID: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'client_id'
+    
+    - name: Variavel v_Authuri
+      set_fact:
+        v_Authuri: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'v_auth_uri'
+
+    - name: Variavel v_Tokenuri
+      set_fact:
+        v_Tokenuri: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'token_uri'
+
+    - name: Variavel v_AuthProvider
+      set_fact:
+        v_AuthProvider: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'auth_provider_x509_cert_url'
+
+    - name: Variavel v_Type
+      set_fact:
+        v_Type: "{{ json | json_query(jmesquery) }}"
+      vars:
+        jmesquery: 'type'
+
+    - name: Variaveis
+      set_fact: 
+            v_Credencial: /mnt/r/Uol/Config/Mediawiki.json
+            v_User: root
+            v_Password: d37eas45
+            v_Key: Config/key
+            v_TipoMaquina: n1-standard-2
+            v_Regiao: southamerica-east1
+            v_Zona: southamerica-east1-b
+            v_Image: projects/ubuntu-os-cloud/global/images/family/ubuntu-minimal-1804-lts

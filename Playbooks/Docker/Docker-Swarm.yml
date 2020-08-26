@@ -1,0 +1,103 @@
+---
+##########################################################
+#                                                        #
+#      Playbook - Instalação do docker_container         #
+#                                                        #
+##########################################################
+- name: Docker-Swarm-CreateNode
+  hosts: swarmmaster
+  become: yes
+  vars:
+    Caminho: /mnt/r/Uol/Config/
+    Token: Token.Worker
+
+  tasks:
+  - name: Cria Docker Swarm - Primario
+    docker_swarm:
+      state: present
+      advertise_addr: ens4
+    register: result
+
+  - name: Deleta arquivo Token.Worker
+    file:
+      path: "{{Caminho}}{{ Token }}"
+      state: absent
+    ignore_errors: yes
+
+  - name: Valida se a pasta existe
+    stat:
+      path: "{{Caminho}}"
+    register: valida
+
+  - name: Criando a pasta
+    file:
+     path: "{{Caminho}}"
+     state: directory
+    when: valida.stat.exists == false
+
+  - name: Cria arquivo Token.Worker
+    file:
+      path: "{{Caminho}}{{ Token }}"
+      state: touch
+
+  - name: Escreve o arquvi Token.Worker
+    lineinfile:
+     path: "{{Caminho}}{{ Token }}"
+     line: "{{ result.swarm_facts.JoinTokens.Worker }}"
+
+  - name: Jogando Arquivo token para o Master
+    fetch: 
+      src: "{{Caminho}}{{ Token }}"
+      dest: "{{Caminho}}{{ Token }}"
+      flat: yes
+ 
+- name: Docker-Swarm-Join-Node 
+  hosts: swarmnode
+  gather_facts: yes
+  become: yes
+  vars:
+   Caminho: /mnt/r/Uol/Config/
+   Token: Token.Worker
+   file: "{{Caminho}}{{ Token }}"
+   Master: "{{groups['swarmmaster'][0]}}"
+
+
+  tasks:
+
+  - name: Valida se a pasta existe
+    stat:
+      path: "{{Caminho}}"
+    register: valida
+
+  - name: Criando a pasta
+    file:
+     path: "{{Caminho}}"
+     state: directory
+    when: valida.stat.exists == false
+
+  - name: Captura o arquivo Token                                                                                                                         
+    copy:
+      src: "{{Caminho}}{{ Token }}"
+      dest: "{{Caminho}}{{ Token }}"
+ 
+  - name: Captura o arquivo de IP-Host                                                                                                                       
+    copy:
+      src: "{{Caminho}}IPS/"
+      dest: "{{Caminho}}IPS/IP-{{Master}}"      
+
+  - name: read file token
+    set_fact:
+      v_Token: "{{ lookup('file','{{Caminho}}{{ Token }}')}}"
+  - name: file
+    set_fact:
+      v_Master: "{{ lookup('file','{{Caminho}}IPS/IP-{{Master}}')}}:2377"
+  - name: file
+    set_fact:
+      v_Ip: "{{ lookup('file','{{Caminho}}IPS/IP-{{ansible_hostname}}')}}"
+
+  - name: Add nodes
+    docker_swarm:
+     state: join
+     advertise_addr: "{{v_Ip}}"
+     join_token: "{{v_Token}}"
+     remote_addrs: [ "{{v_Master}}" ]

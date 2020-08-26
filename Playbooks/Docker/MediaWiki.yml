@@ -1,0 +1,60 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+
+  - name: Valida se a pasta existe
+    stat:
+      path: "/var/www/html/"
+    register: valida
+
+  - name: Criando a pasta
+    file:
+     path: "/var/www/html/"
+     state: directory
+    when: valida.stat.exists == false
+
+  - name: Captura o arquivo de IP-Host                                                                                                                       
+    copy:
+      src: "/mnt/r/Uol/Config/LocalSettings.php"
+      dest: "/mnt/MediaWiki/" 
+  
+  - name: Chmod
+    shell: chmod 644 /mnt/MediaWiki/LocalSettings.php
+
+
+- hosts: "{{groups['swarmmaster'][0]}}"
+  become: yes
+
+  tasks:
+
+  - name: Subindo servico - MediaWiki
+    shell:  docker service create \
+              --name MediaWiki \
+              --constraint node.role==worker \
+              --mount source=/mnt/MediaWiki/:/var/www/http \
+              --replicas 3 \
+              --publish 80:80 \
+              --hostname mediawiki \
+              --network rede_interna \
+            mediawiki
+  
+
+#- hosts: all
+#  become: yes./
+#  tasks:
+#
+#      - name:
+#        pause: 
+#          seconds: 5
+#
+#      - name:
+#        shell: docker ps -aqf "name=MediaWiki"
+#        register: Conteiner
+#
+#      - name: atualiza PHP
+#        shell:
+#          docker cp /var/www/html/LocalSettings.php "{{item}}":/var/www/html/
+#        with_items:
+#          - "{{Conteiner.stdout_lines}}" 

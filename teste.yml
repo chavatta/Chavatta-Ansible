@@ -1,0 +1,57 @@
+---
+- name: Tarefa de testes - teste do momento !GlusterFS!
+  hosts: all
+  become: yes
+  tasks:
+    - name: attrach and format disks
+      shell: mkfs.xfs /dev/sdb
+
+    - name: create a brick folder
+      shell: mkdir -p /gluster/bricks/"{{ansible_hostname}}"/ && echo '/dev/sdb /gluster/bricks/"{{ansible_hostname}}"/ xfs defaults 0 0' >> /etc/fstab
+
+    - name: create a brick folder
+      shell: mount /dev/sdb
+
+- name: subindo Clusters !GlusterFS!
+  hosts: swarmmaster
+  become: yes
+  tasks:
+
+    - name: gluster peer probe
+      shell: gluster peer probe "{{item}}"
+      when: "{{ item != ansible_hostname }}"
+      with_items: 
+        - "{{ groups['APP'] }}"
+    
+    - name: Create Gluster volume
+      shell: gluster volume create gfs \
+              replica 4 \
+              "{{ groups['APP'][-1] }}":/gluster/bricks/"{{ groups['APP'][-1] }}" \
+              "{{ groups['APP'][0] }}":/gluster/bricks/"{{ groups['APP'][0] }}" \
+              "{{ groups['APP'][1] }}":/gluster/bricks/"{{ groups['APP'][1] }}" \
+              "{{ groups['APP'][2] }}":/gluster/bricks/"{{ groups['APP'][2] }}"
+    
+    - name: gluster volume start gfs
+      shell: gluster volume start gfs
+    
+    - name: Glusterdisk Auth.allow
+      shell: gluster volume set glusterdisk auth.allow "{{ groups['swarmmaster'][0] }}","{{ groups['APP'][0] }}","{{ groups['APP'][1] }}","{{ groups['APP'][2] }}"
+
+- name: Tarefa de testes - teste do momento !GlusterFS!
+  hosts: all
+  become: yes
+  tasks:
+    - name: create a brick folder
+      shell: echo '"{{ansible_hostname}}":/glusterdisk /mnt glusterfs defaults,_netdev,backupvolfile-server="{{ansible_hostname}}"'
+
+    - name: create a brick folder
+      shell: mount.glusterfs "{{ansible_hostname}}":/glusterdisk /mnt
+
+- name: subindo Clusters !GlusterFS!
+  hosts: swarmmaster
+  become: yes
+  tasks:
+
+    - name: Criando diretorios
+      shell: "mkdir -p /mnt/MediaWiki && mkdir -p /mnt/MySQL"
+    

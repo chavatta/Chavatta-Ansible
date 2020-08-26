@@ -1,0 +1,5 @@
+- import_playbook: Playbooks/Docker/Docker-Swarm.yml
+- import_playbook: Playbooks/Docker/Docker-Network.yml
+- import_playbook: Playbooks/Docker/GlusterFS-Volumes.yml
+- import_playbook: Playbooks/Docker/Cluster-MySQL.yml
+- import_playbook: Playbooks/Docker/MediaWiki.yml

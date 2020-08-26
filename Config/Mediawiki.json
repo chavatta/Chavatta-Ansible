@@ -1,0 +1,12 @@
+{
+  "type": "serviceaccount",
+  "project_id": "mediawiki-286621",
+  "private_key_id": "558dd611364be2af5aabf9731dd0e686c9567ab8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBjEs7yJ7Sn1e2\n6dR9B/8iVnpoFBe2tYxs1b/pvUfW9H/RvFZCoJ2yd8FDnHI6Z9tq78HayAYQHViG\n29Xas0UfyOPVHCw57ZDXSHV0BtncmyBNEB8JfTChg39YsAnxtU9XNIWgJaXXTqYN\nwSgAwvctjaUBMb08RuIFDvgVLSJMxyhXdo8x0MYHzJLwt6yyQJgbBIY9S1Cxxn1G\ns/a6I4kLWBZs4tj2mxmWyNa4KGDtiVf4xbZ3k2tAnxylN8ivVKhUyZZ3EY10G1Yi\nVT0dBHgjxFh0jcQMcZZYxt3D3p6ZSBH858aFDfYfGDmVnPHeK2ZvzlmwWNTgYV2r\nNYUX+KVvAgMBAAECggEACwx0XQDPruFWvgPXfp20FE87JJwvsF0+cMC7owm27fqT\nc13HeifgvgffufmBJya3nAFSH9L2+aOF4rOY9SedBLql5Yv6qwHjQ07ebusB3nni\nhv5VGehncXOSvkrU/n3QU3+VjeCoThlYxFnoQTGKr7Mxc1crYM4BErMvOUeUI4LK\nDDeg2mJrb3iHSZO0ZHmVUgzKPpxkKTwu8xE5kUlIB3an5WF2bt/PAPEnmnG21r+f\nc0uzSgaCEyhxur/LOmTqtLOuk0El/3ATCa41NnFNGuzY2Zben7oOzvqG6iuQv+wW\nITvhv1HKE7FzSrIY2uRsdM2i9yJ7e2/ec5ZUOJGeTQKBgQD51qqvqFgypmHyp/98\nUvl/97tO7mqqCBoovNMsTVok+XxmQZ6v0jcD0APIVgusrVjdUPYtFJGyEFybWsnb\nrYgmDKKxrFVPUv+7tKqORwDtTm8Xs4fZc1gsjbxnwbNeiMFk4OOsou9mERVGZ6H/\nk7s+EvY2fifovcSkADykYCejrQKBgQDGUj3y8mLuPMae/+DqweJHo/T+0+RZryh1\nBlBI4PzN41lJIxCIge079wAj+hR/Bx+HlSGHvYz3my1Pv0SzF8EY8MEiSkUAVUSJ\nQiQmUtNGTHsHczSjVdJ/LKFXHHgrLA6DajpvIW95bdqxS+EiX5ve4OGBT7inB1HW\nryw2OcKxCwKBgQDecMB7sRkFz5m5oNYZ7Q5zXzAH8MJLLPeNecFS2nP+I5scuCP/\nStzsqhIUFnhCf/x04BauwHeP4H1zXHwI+RIVPn7ETjmObMmAaDTKhHFQ19qVcaTs\neIPy9ybeAlofOwdlN8298TvQ1jjo/HABy5iUhfFtRxllYUBo/EUB3RKt6QKBgHWA\n2O+PKYqaO9yNIwg05AsqW8h4Zz20CDZ+DSeBFoguggJRYkRfJt52lIC8dVRmNgox\nE/LHHjS+nnQ3kU7DbkeGrgfRFV0DKF5i7+Q9Aq0ON37MhY2ZFeT/3oAsgA6kRd0b\nHZAmsVOzAPY3TSb+mu3NNA9X2sIsFhMrKvjd9DrNAoGAMYL75t7Mnblgdyzp3SB0\nweS28nFuAh21B6Mh9nc2VA9qfWNAu1v3lVarRgag+BCTNmgSbuJCRxADIXgT7zOy\nla2WR7ZVkR8CWJFxaOvJMTd6YytVhOh3fLG2XeaZj27Y1nRPSJ8+QCJlmAl3qXzR\nGRiwOnyEhTsDdZIKmGS11q4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "ansible@mediawiki-286621.iam.gserviceaccount.com",
+  "client_id": "111638603508383408855",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/ansible%40mediawiki-286621.iam.gserviceaccount.com"
+}

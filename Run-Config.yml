@@ -1,0 +1,4 @@
+---
+- import_playbook: Config/Config.yml
+- import_playbook: Playbooks/GCP/Install-Docker.yml
+- import_playbook: Playbooks/GCP/SSH-Key.yml

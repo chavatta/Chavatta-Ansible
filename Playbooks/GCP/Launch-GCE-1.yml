@@ -1,0 +1,124 @@
+---
+##########################################################
+#                                                        #
+#      Playbook - Instancias GOOGLE CLOUD PLATAFORM      #
+#                                                        #
+#########################################################
+#- name: "Instancias GOOGLE CLOUD PLATAFORM " 
+
+- name: Criando o Disco_Docker
+  gcp_compute_disk:
+      name: "disco-{{ Variavel }}"
+      size_gb: 50
+      source_image: '{{ v_Image }}'
+      zone: "{{ v_Zona }}"
+      project: "{{ v_ProjectID }}"
+      auth_kind: "{{ v_Type }}"
+      service_account_file: "{{ v_Credencial }}"
+      scopes:
+        - https://www.googleapis.com/auth/compute
+      state: present
+  register: disk
+
+- name: Criando o Disco_Docker
+  gcp_compute_disk:
+      name: "disco-xfs-{{ Variavel }}"
+      size_gb: 10
+      #source_image: '{{ v_Image }}'
+      zone: "{{ v_Zona }}"
+      project: "{{ v_ProjectID }}"
+      auth_kind: "{{ v_Type }}"
+      service_account_file: "{{ v_Credencial }}"
+      scopes:
+        - https://www.googleapis.com/auth/compute
+      state: present
+  register: diskxfs
+
+  
+- name: Criando o rede externa
+  gcp_compute_address:
+      name: "rede-{{ Variavel }}"
+      region: "{{ v_Regiao }}"
+      project: "{{ v_ProjectID }}"
+      auth_kind: "{{ v_Type  }}"
+      service_account_file: "{{ v_Credencial }}"
+      scopes:
+        - https://www.googleapis.com/auth/compute
+      state: present
+  register: address
+
+#- pause:
+#    prompt: msg="{{address}}"
+
+- name: Criando GCE
+  gcp_compute_instance:
+      state: present
+      name: "instancia-{{ Variavel }}"
+      machine_type: "{{ v_TipoMaquina }}"
+      disks:
+        - auto_delete: true
+          boot: true
+          source: "{{ disk }}"
+#          device_name: "{{diskxfs}}"
+      network_interfaces:
+          - network: null
+            access_configs:
+              - name: 'External NAT'
+                nat_ip: "{{ address }}"
+                type: 'ONE_TO_ONE_NAT'
+      zone: "{{ v_Zona }}"
+      project: "{{ v_ProjectID }}"
+      auth_kind: "{{ v_Type  }}"
+      service_account_file: "{{ v_Credencial }}"
+      scopes:
+        - https://www.googleapis.com/auth/compute
+  register: instance
+
+- name: Wait for SSH to come up
+  wait_for: host={{ address.address }} port=22 delay=10 timeout=60
+
+- name: Add tags to "instancia-{{ Variavel }}"
+  gce_tag:
+    instance_name: "instancia-{{ Variavel }}"
+    tags: http-server,https-server
+    zone: "{{ v_Zona }}"
+    state: present
+    pem_file: "{{ v_Credencial }}"
+    project_id: "{{ v_ProjectID }}"
+    service_account_email: "{{v_ClientEmail}}"
+
+- name: Inserindo o Endereco no arquivo hosts - "{{ Variavel }}"
+  lineinfile:
+    path: /mnt/r/Uol/Config/hosts
+    insertafter: '^\[swarmnode\]'
+    line: "instancia-{{ Variavel }} ansible_host={{ address.address }} ansible_ssh_private_key_file=Config/saansible-key ansible_ssh_user=valeriandreoni_gmail_com"
+  when: "{{'swarmnode' in Variavel}}"   
+
+- name: Inserindo o Endereco no arquivo hosts - "{{ Variavel }}"
+  lineinfile:
+    path: /mnt/r/Uol/Config/hosts
+    insertafter: '^\[swarmmaster\]'
+    line: "instancia-{{ Variavel }} ansible_host={{ address.address }} ansible_ssh_private_key_file=Config/saansible-key ansible_ssh_user=valeriandreoni_gmail_com"
+  when: "{{'swarmmaster' in Variavel}}"
+
+- name: Inserindo o Endereco no inventario - Docker
+  lineinfile:
+    path: /mnt/r/Uol/Config/hosts
+    insertafter: "[APP]"
+    line: "instancia-{{ Variavel }} ansible_host={{ address.address }} ansible_ssh_private_key_file=Config/saansible-key ansible_ssh_user=valeriandreoni_gmail_com a=a"
+  when: "{{'swarm' in Variavel}}"
+
+- name: limpando chaves
+  shell: ssh-keygen -f "/root/.ssh/known_hosts" -R "{{ address.address }}"
+
+- name: Ansible delete file glob
+  find:
+    paths: Config/IPS
+    patterns: "*"
+  register: Pasta
+
+- name: limpando pasta IPS
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ Pasta.files }}"
