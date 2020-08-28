@@ -1,1 +1,1 @@
-ansible-playbook -i /mnt/r/Uol/Config/hosts /mnt/r/Uol/teste.yml -vvvv
+ansible-playbook -i Config/hosts teste.yml -vvvv

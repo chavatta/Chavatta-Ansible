@@ -1,0 +1,33 @@
+docker volume create --driver local \
+    --opt type=none \
+    --opt device=/mnt/MySQL \
+    --opt o=bind \
+vo_mysql
+
+docker volume create --driver local \
+    --opt type=none \
+    --opt device=/mnt/MySQL_Conf \
+    --opt o=bind \
+vo_mysql_config
+
+docker volume create --driver local \
+    --opt type=none \
+    --opt device=/mnt/MediaWiki \
+    --opt o=bind \
+vo_MediaWiki
+
+
+docker service create \
+                --name MediaWiki \
+                --replicas 3 \
+                --constraint node.role==worker \
+                --mount type=bind,source=/mnt/MediaWiki,dst=/data \
+                --env MEDIAWIKI_SITE_NAME=Chavattopedia \
+                --env MEDIAWIKI_ADMIN_USER=Chavatta \
+                --env MEDIAWIKI_DB_HOST=35.199.124.66 \
+                --env MEDIAWIKI_DB_PASSWORD=123456 \
+                --env MEDIAWIKI_DB_NAME=db_mediawiki \
+                --publish 80:80 \
+                --hostname mediawiki \
+                --network rede_interna \
+mediawiki

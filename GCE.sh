@@ -1,5 +1,5 @@
-ansible-playbook /mnt/r/Uol/Run-GCE.yml
+ansible-playbook Run-GCE.yml
 sleep 5
-ansible-playbook -i /mnt/r/Uol/Config/hosts /mnt/r/Uol/Run-Config.yml
+ansible-playbook -i Config/hosts Run-Config.yml
 sleep 5
-ansible-playbook -i /mnt/r/Uol/Config/hosts /mnt/r/Uol/Run-Docker.yml
+ansible-playbook -i Config/hosts Run-Docker.yml

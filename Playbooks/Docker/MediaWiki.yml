@@ -30,15 +30,15 @@
   tasks:
 
   - name: Subindo servico - MediaWiki
-    shell:  docker service create \
-              --name MediaWiki \
-              --constraint node.role==worker \
-              --mount source=/mnt/MediaWiki/:/var/www/http \
-              --replicas 3 \
-              --publish 80:80 \
-              --hostname mediawiki \
-              --network rede_interna \
-            mediawiki
+      shell: docker service create \
+                --name MediaWiki \
+                --constraint node.role==worker \
+                --mount type=volume,source=vo_mediawiki,dst=/var/www/html \
+                --replicas 3 \
+                --publish 80:80 \
+                --hostname mediawiki \
+                --network rede_interna \
+              mediawiki
   
 
 #- hosts: all

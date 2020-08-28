@@ -54,3 +54,27 @@
 
     - name: Criando diretorios
       shell: "mkdir -p /mnt/MediaWiki && mkdir -p /mnt/MySQL"
+    
+    - name: Criando volume MySQL
+      shell: 
+            docker volume create --driver local \
+              --opt type=none \
+              --opt device=/mnt/MySQL \
+              --opt o=bind \
+            vo_mysql
+
+    - name: Criando volume MySQL_Config
+      shell: 
+            docker volume create --driver local \
+                --opt type=none \
+                --opt device=/mnt/MySQL_Conf \
+                --opt o=bind \
+            vo_mysql_config
+
+    - name: Criando volume MediaWiki
+      shell:
+            docker volume create --driver local \
+                --opt type=none \
+                --opt device=/mnt/MediaWiki \
+                --opt o=bind \
+            vo_MediaWiki

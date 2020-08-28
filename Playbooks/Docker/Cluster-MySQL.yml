@@ -14,8 +14,8 @@
           --network rede_interna \
           --publish 3306:3306 \
           --env MYSQL_DATABASE=db_mediawiki \
-          --mount source=/mnt/MySQL:/var/lib/mysql \
-          --mount source=/mnt/MySQL:/etc/mysql/conf.d \
+          --mount type=volume,source=vo_mysql,dst=/var/lib/mysql \
+          --mount type=volume,source=vo_mysql_conf,dst=/etc/mysql/conf.d  \
           --env DB_SERVICE_NAME=MySQL \
           --env MYSQL_USER=mediawiki \
           --env MYSQL_PASSWORD=123456 \
